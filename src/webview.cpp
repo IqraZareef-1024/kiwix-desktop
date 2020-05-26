@@ -1,6 +1,7 @@
 #include "webview.h"
 
 #include <QDesktopServices>
+#include <QMenu>
 #include <QAction>
 #include <iostream>
 #include "kiwixapp.h"
@@ -69,6 +70,27 @@ void WebView::wheelEvent(QWheelEvent *event) {
             KiwixApp::instance()->getAction(KiwixApp::ZoomOutAction)->activate(QAction::Trigger);
         }
     }
+}
+
+void WebView::contextMenuEvent(QContextMenuEvent *event)
+{
+    auto menu = this->page()->createStandardContextMenu();
+    pageAction(QWebEnginePage::OpenLinkInNewWindow)->setVisible(false);
+    if (!m_linkHovered.isEmpty()) {
+        if (!m_linkHovered.startsWith("zim://")) {
+            pageAction(QWebEnginePage::OpenLinkInNewTab)->setVisible(false);
+            auto openLinkInWebBrowserAction = KiwixApp::instance()->getAction(KiwixApp::OpenLinkInWebBrowserAction);
+            menu->insertAction(pageAction(QWebEnginePage::DownloadLinkToDisk) , openLinkInWebBrowserAction);
+            connect(openLinkInWebBrowserAction, &QAction::triggered, this, [=](bool checked) {
+                Q_UNUSED(checked);
+                QDesktopServices::openUrl(m_linkHovered);
+                disconnect(openLinkInWebBrowserAction, nullptr, nullptr, nullptr);
+            });
+        } else {
+            pageAction(QWebEnginePage::OpenLinkInNewTab)->setVisible(true);
+        }
+    }
+    menu->exec(event->globalPos());
 }
 
 bool WebView::eventFilter(QObject *src, QEvent *e)

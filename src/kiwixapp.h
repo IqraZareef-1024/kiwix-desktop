@@ -53,6 +53,7 @@ public:
         SettingAction,
         DonateAction,
         ExitAction,
+        OpenLinkInWebBrowserAction,
         MAX_ACTION
     };
     enum SideBarType {

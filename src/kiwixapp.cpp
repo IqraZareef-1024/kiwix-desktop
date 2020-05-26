@@ -429,6 +429,8 @@ void KiwixApp::createAction()
 
     CREATE_ACTION_ICON(ExitAction, "exit", gt("exit"));
     SET_SHORTCUT(ExitAction, QKeySequence::Quit);
+
+    CREATE_ACTION(OpenLinkInWebBrowserAction, gt("open-link-in-web-browser"));
 }
 
 void KiwixApp::postInit() {
